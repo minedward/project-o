@@ -1,0 +1,43 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "orcClip-1",
+  "_objFlags": 0,
+  "_rawFiles": null,
+  "_duration": 0.3333333333333333,
+  "sample": 12,
+  "speed": 1,
+  "wrapMode": 2,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "dae94ebe-7751-4ee5-a312-0117d7392f5a"
+            }
+          },
+          {
+            "frame": 0.08333333333333333,
+            "value": {
+              "__uuid__": "fbbce0a3-d596-4371-aeee-83792a7fe58f"
+            }
+          },
+          {
+            "frame": 0.16666666666666666,
+            "value": {
+              "__uuid__": "bfe6f6e1-b75b-48b4-a1c1-aa122821e198"
+            }
+          },
+          {
+            "frame": 0.25,
+            "value": {
+              "__uuid__": "aa76a80d-de97-4cc5-ae8d-4ee88635eae7"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}

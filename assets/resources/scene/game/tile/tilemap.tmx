@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="81" height="31" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="barrier" tilewidth="16" tileheight="16">
+  <image source="barrier.png" width="16" height="16"/>
+ </tileset>
+ <layer name="barrier" width="81" height="31" opacity="0">
+  <data encoding="base64" compression="zlib">
+   eJzt18EJgDAQAMHYf9M2oIKsRtRZyEcCXuZ3yxhjcS45s/ryW3Q+hj2GPYY9hj2GPYY9hj2GPYY9hr0twxm75xv35b1/MGwzb30/unv3PAz7PAz7PF8y1LkY9hj2GPYY9hj2GPYY9hj2GPYY9p4yfOO+vNeMt/zlrLjWAfg=
+  </data>
+ </layer>
+</map>
