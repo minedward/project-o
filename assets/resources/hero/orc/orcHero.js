@@ -9,7 +9,7 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-
+        this._super();
     },
 
     // called every frame, uncomment this function to activate update callback

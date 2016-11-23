@@ -1,22 +1,14 @@
-var gameGrid = require('gameGrid');
-var entityLayer = require('entityLayer');
-
 cc.Class({
     extends: cc.Component,
 
-    properties: {
-        gameGrid: {
-            default: null,
-            type: gameGrid
-        },
-        entityLayer: {
-            default: null,
-            type: entityLayer
-        }
-    },
+    properties: {},
 
     // use this for initialization
     onLoad: function () {
+        var gameScene = this.node.parent.getComponent('gameScene');
+        this.gameGrid = gameScene.gameGrid;
+        this.entityLayer = gameScene.entityLayer;
+
         this.setTouchEvent();
     },
 
@@ -40,14 +32,14 @@ cc.Class({
         this.isTouching = true;
         var pos = event.getLocation();
         this.gameGrid.setVisiable(true);
-        this.gameGrid.position2grid(pos);
+        this.gameGrid.touchPosition2Gird(pos);
         this.gameGrid.changeRectBlock();
         this.entityLayer.createVirtualBuild(this.gameGrid.buildCenterPos);
     },
 
     onTouchMove: function(event) {
         var pos = event.getLocation();
-        if (this.gameGrid.position2grid(pos)) {
+        if (this.gameGrid.touchPosition2Gird(pos)) {
             this.gameGrid.changeRectBlock();
             this.entityLayer.moveVirtualBuild(this.gameGrid.buildCenterPos);
         }

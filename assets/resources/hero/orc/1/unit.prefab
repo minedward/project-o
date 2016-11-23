@@ -140,7 +140,7 @@
     },
     "_enabled": true,
     "hp": 100,
-    "speed": 10,
+    "speed": 5,
     "atk": 1,
     "atkType": 1,
     "defType": 1,

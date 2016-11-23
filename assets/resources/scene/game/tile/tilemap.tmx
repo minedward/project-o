@@ -3,9 +3,14 @@
  <tileset firstgid="1" name="barrier" tilewidth="16" tileheight="16">
   <image source="barrier.png" width="16" height="16"/>
  </tileset>
- <layer name="barrier" width="81" height="31" opacity="0">
+ <layer name="floor" width="81" height="31" opacity="0.17">
   <data encoding="base64" compression="zlib">
-   eJzt18EJgDAQAMHYf9M2oIKsRtRZyEcCXuZ3yxhjcS45s/ryW3Q+hj2GPYY9hj2GPYY9hj2GPYY9hr0twxm75xv35b1/MGwzb30/unv3PAz7PAz7PF8y1LkY9hj2GPYY9hj2GPYY9hj2GPYY9p4yfOO+vNeMt/zlrLjWAfg=
+   eJztwwENAAAMw6DOv+kLOSSsmqqqqqqqqqqqqj56sNwJ0A==
+  </data>
+ </layer>
+ <layer name="barrier" width="81" height="31">
+  <data encoding="base64" compression="zlib">
+   eJzt2FEKgCAQANH1/pfuM6i1giltZQaCDEJ9+FMtIlqMqQ28ZuxnxpwamoY8DXka8jTkacjTkKchT0OehjwNeZlh7/6rOat8L98ZHZ8d3/1iLRUNs/Ef/nNUMXy6n4jz3J7Dfd3ZuGeY3b+5lqqGV0Yjz/5qacjTkKchT0OehjwNeRryNORpyNOQ94f/HFW+l5/uZ8acqxhuIl4BiA==
   </data>
  </layer>
 </map>

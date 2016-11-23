@@ -33,6 +33,7 @@ cc.Class({
             tooltip: '主城位置(格)'
         },
         mainBuildRange: 3,
+        freshFrequency: 0.1,
     },
 
     // use this for initialization
@@ -49,6 +50,20 @@ cc.Class({
         this.buildRange = 2;
         this.setVisiable(false);
         this.addListeners();
+    },
+
+    update: function(dt) {
+        this.freshDt += dt;
+        if (this.freshDt > this.freshFrequency) {
+
+            this.freshDt = 0;
+        }
+    },
+
+    addListeners: function() {
+        Notification.on('build_destroy', function(detail){
+            this.destroyBuild(detail.blockArray);
+        }.bind(this), this);
     },
 
     // 生成网格线
@@ -106,6 +121,7 @@ cc.Class({
 
     // 网格显隐
     setVisiable: function(visiable) {
+        this.visiable = visiable;
         this.bg.active = visiable;
         this.blockContainer.active = visiable;
         this.lineContainer.active = visiable;
@@ -125,6 +141,12 @@ cc.Class({
     // 像素转换为格子
     position2grid: function(vec2) {
         var x = Math.floor(vec2.x / this.blockSize);
+        var y = Math.floor(vec2.y / this.blockSize);
+        return cc.v2(x, y);
+    },
+
+    touchPosition2Gird: function(vec2) {
+        var x = Math.floor(vec2.x / this.blockSize);
         var y = Math.floor((vec2.y - this.originY) / this.blockSize);
         var flag = false;
 
@@ -136,7 +158,8 @@ cc.Class({
             this.touchVec2[1] = y;
             flag = true;
         }
-        this.buildCenterPos = cc.v2((x+this.buildRange/2) * this.blockSize, (y+this.buildRange/2) * this.blockSize);
+        if (flag)
+            this.buildCenterPos = cc.v2((x+this.buildRange/2) * this.blockSize, (y+this.buildRange/2) * this.blockSize);
 
         return flag;
     },
@@ -210,11 +233,5 @@ cc.Class({
             var y = element[1];
             this.blockArray[x][y] = 1;
         }
-    },
-
-    addListeners: function() {
-        Notification.on('build_destroy', function(blockArray){
-            this.destroyBuild(blockArray);
-        }.bind(this), this);
     },
 });

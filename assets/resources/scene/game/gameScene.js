@@ -1,7 +1,18 @@
+var gameGrid = require('gameGrid');
+var entityLayer = require('entityLayer');
+
 cc.Class({
     extends: cc.Component,
 
     properties: {
+        gameGrid: {
+            default: null,
+            type: gameGrid
+        },
+        entityLayer: {
+            default: null,
+            type: entityLayer
+        }
     },
 
     // use this for initialization

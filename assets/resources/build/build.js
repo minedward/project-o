@@ -1,14 +1,12 @@
+var entity = require('entity');
+
 cc.Class({
-    extends: cc.Component,
+    extends: entity,
 
     properties: {
         range: {
             default: 2,
             tooltip: '兵营大小（格）'
-        },
-        hp: {
-            default: 100,
-            tooltip: '血量'
         },
         defType: {
             default: 3,
@@ -81,7 +79,7 @@ cc.Class({
         var heroCollider = hero.getComponent(cc.BoxCollider);
 
         if (this.getBuildRelativePos() == 'up') {
-            var bottomX = this.node.x + buildCollider.size.width / 4;
+            var bottomX = this.node.x + buildCollider.size.width / 2;
             var bottomY = this.node.y - buildCollider.size.height / 2;
             hero.x = bottomX - idx * heroCollider.size.width / 2;
             hero.y = bottomY - heroCollider.size.height;
@@ -93,14 +91,17 @@ cc.Class({
         }
 
         var heroComponent = hero.getComponent('hero');
-        heroComponent.setCamp(1);
-        heroComponent.move();
+        heroComponent.camp = this.camp;
+        heroComponent.setGrid(this.grid);
+        heroComponent.setAStarMap(this.aStarMap);
     },
 
     getBuildRelativePos: function() {
         var range = Math.sqrt(this.blockArray.length);
         var y = this.blockArray[0][1];
-        if (y + range <= 7)   // 7位中数
+        if (y + range - 1 < 7)  // 7位中数
+            return 'down';
+        else if (y == 7 && y + range - 1 == 8)
             return 'down';
         else
             return 'up';
@@ -111,8 +112,7 @@ cc.Class({
         if (this.clickTimes >= 2) { //双击销毁
             this.clickTimes = 0;
             this.node.destroy();
-            if (this.blockArray)
-                Notification.dispatch('build_destroy', this.blockArray);
+            Notification.dispatch('build_destroy', {blockArray: this.blockArray, pos: this.node.getPosition(), range: this.range});
         }
     }
 });

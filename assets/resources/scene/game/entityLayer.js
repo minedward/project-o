@@ -1,4 +1,4 @@
-var AStar = require('AStar');
+var AStarMap = require('aStarMap');
 
 cc.Class({
     extends: cc.Component,
@@ -11,7 +11,7 @@ cc.Class({
         },
         aStarMap: {
             default: null,
-            type: AStar
+            type: AStarMap
         },
         mainBuildPos_l: {
             default: new cc.Vec2(80, 240),
@@ -87,10 +87,16 @@ cc.Class({
         this.currVirtualBuild.removeFromParent();
     },
 
-    createBuild: function(vec2, blockArray) {
+    createBuild: function(vec2, blockArray, heroMovePath) {
         var node = cc.instantiate(this.resources[this.resPath[1]]);
         node.parent = this.node;
         node.setPosition(vec2);
-        node.getComponent('build').setGridPosition(blockArray);
+        
+        var build = node.getComponent('build');
+        build.setGridPosition(blockArray);
+        build.camp = 1;
+        build.setGrid(this.grid);
+        build.setAStarMap(this.aStarMap);
+        this.aStarMap.createBarrier(vec2, build.range);
     }
 });

@@ -1,11 +1,9 @@
+var entity = require('entity');
+
 cc.Class({
-    extends: cc.Component,
+    extends: entity,
 
     properties: {
-        hp: {
-            default: 100,
-            tooltip: '血量'
-        },
         speed: {
             default: 1,
             tooltip: '速度（计量单位是 格/s）'
@@ -17,10 +15,6 @@ cc.Class({
         atkType: {
             default: 1,
             tooltip: '攻击类型（1：物理， 2：魔法）'
-        },
-        defType: {
-            default: 1,
-            tooltip: '防御类型（1：物理， 2：魔法， 3：城甲）'
         },
         atkRange: {
             default: 1,
@@ -34,38 +28,126 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        this.move();
+        var self = this;
+        this.fsm = StateMachine.create({
+            initial: 'idle',
+            events: [
+                { name: 'walk', from: 'idle', to: 'walking'},
+                { name: 'rush', from: ['idle', 'walking'], to: 'run'},
+                { name: 'attack', from: ['idle', 'walking', 'run', 'hurting'], to: 'attacking'},
+                { name: 'skill', from: ['idle', 'walking', 'run', 'hurting'], to: 'skilling'},
+                { name: 'hurt', from: 'idle', to: 'hurting'},
+                { name: 'die', from: '*', to: 'dead'}
+            ],
+
+            callbacks: {
+                onwalking:          function(event, from, to) { self.onWalking();           },
+                onrun:              function(event, from, to) { self.onRun();               },
+                onattacking:        function(event, from, to) { self.onAttacking();         },
+                onskilling:         function(event, from, to) { self.onSkilling();          },
+                onhurting:          function(event, from, to) { self.onHurting();           },
+                ondead:             function(event, from, to) { self.onDead();              },
+                onwalk:             function(event, from, to) { self.onWalk();              },
+                onrush:             function(event, from, to) { self.onRush();              },
+                onattack:           function(event, from, to) { self.onAttack();            },
+                onskill:            function(event, from, to) { self.onSkill();             },
+                onhurt:             function(event, from, to) { self.onHurt();              },
+                ondie:              function(event, from, to) { self.onDie();               },
+            }
+        });
+
+        this.inPosType = 1; // 1：已方营地 2：战地 3：敌方营地
+        this.fsm.walk();
+        // this.addListeners();
     },
 
-    // update: function (dt) {
-    //     if (this.moveFlag) {
-    //         this.node.x += this.speed * 32 * dt;    // 32为一个网格大小
-    //         this.node.y += this.speed * 32 * dt;
-    //     }
-    // },
+    update: function (dt) {
+        if (this.startMoveFlag) {
+            this.node.stopAllActions();
+            if (this.inPosType == 1) {  // A星寻路
+                this.moveByAStar();
+            } else {   // 直线行走
+                this.moveByLine(dt);
+            }
+        }
+    },
 
-    onwalk: function() {
+    addListeners: function() {
+    },
+
+    // ========================================================
+    // 行为状态
+    onWalking: function() {
         var animationCp = this.node.getComponent('cc.Animation');
         animationCp.play('walk');
     },
 
-    move: function() {
-        this.moveFlag = true;
-        this.onwalk();
-        this.node.runAction(cc.moveTo(this.moveTime, this.endPos));
+    onRun: function() {
+        var animationCp = this.node.getComponent('cc.Animation');
+        animationCp.play('run');
     },
 
-    setCamp: function(camp) {
-        this.camp = camp;
-        if (camp == 1) {
-            this.endPos = cc.v2(1200, 240);
-            this.moveTime = cc.pDistanceSQ(this.endPos, this.node.getPosition()) / (this.speed * 32 * this.speed * 32);
-        } else {
+    onAttacking: function() {
+        var animationCp = this.node.getComponent('cc.Animation');
+        animationCp.play('attack');
+    },
 
+    onSkilling: function() {
+        var animationCp = this.node.getComponent('cc.Animation');
+        animationCp.play('skill');
+    },
+
+    onHurting: function() {
+        var animationCp = this.node.getComponent('cc.Animation');
+        animationCp.play('hurt');
+    },
+
+    onDead: function() {
+        var animationCp = this.node.getComponent('cc.Animation');
+        animationCp.play('die');
+    },
+
+    // ========================================================
+    // 行为事件
+    onWalk: function() {
+        this.startMoveFlag = true;
+    },
+
+    moveByAStar: function() {
+        var selfPos = this.node.getPosition();
+        var tileSize = this.aStarMap.tiledMap.getTileSize();
+        var selfPosAtMap = cc.v2(selfPos.x+tileSize.width/2, selfPos.y+tileSize.height/2+1);
+        var movePath = this.aStarMap.getMovePath(this.aStarMap.tilePosistion(selfPosAtMap), this.camp);
+        var sequence = [];
+
+        for (var i = 0; i < movePath.length; i++) {
+            var pos = this.aStarMap.getPosistion(movePath[i]);
+            pos.y -= tileSize.height / 2;
+
+            var duration = (pos.x != selfPos.x) && (pos.y != selfPos.y) ? 1.4 / this.speed : 1 / this.speed;
+            sequence.push(cc.moveTo(duration, pos));
+
+            selfPos = pos;
+        }
+        sequence.push(cc.callFunc(function() {
+            this.tileMapY = movePath[movePath.length-1].y;
+            this.inPosType = 2;
+            this.startMoveFlag = true;
+        }.bind(this)));
+
+        this.node.runAction(cc.sequence(sequence));
+        this.startMoveFlag = false;
+    },
+
+    moveByLine: function(dt) {
+        if (this.node.x < this.node.parent.width) {
+            if (this.inPosType == 2 && this.node.x > this.aStarMap.campBorderPx_r)
+                this.inPosType = 3;
+                
+            var tileSize = this.aStarMap.tiledMap.getTileSize();
+            this.node.x += this.speed * tileSize.width * dt;
+        } else {
+            this.startMoveFlag = false;
         }
     },
-
-    setMap: function() {
-
-    }
 });
