@@ -60,7 +60,6 @@ cc.Class({
                     // ======================================
 
                     let raw = cc.p(parent.x + i, parent.y + j);
-
                     if (this.isInBarrierLayer(raw, isEight, parent)) {continue;}
                     if (this.isInList(raw, openList)) {continue;}
                     if (this.isInList(raw, closeList)) {continue;}
@@ -95,8 +94,8 @@ cc.Class({
     },
 
     isInList: function(tilePosition, list){
-        for (let pos of list) {
-            if (cc.pointEqualToPoint(pos, tilePosition)) return true;
+        for (var i = 0; i < list.length; i++) {
+            if (cc.pointEqualToPoint(list[i], tilePosition)) return true;
         }
         return false;
     },

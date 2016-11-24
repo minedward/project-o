@@ -41,8 +41,6 @@ cc.Class({
         this.buildDt = 0;
         this.clickTimes = 0;
         this.clickDuration = 0;
-        this.entityLayer = this.node.parent;
-        this.gridNodeScript = this.entityLayer.parent.getChildByName('girdNode').getComponent('gameGrid');
     },
 
     // called every frame, uncomment this function to activate update callback
@@ -72,28 +70,29 @@ cc.Class({
     },
 
     createHero: function(idx) {
-        var hero = cc.instantiate(this.heroUnit);
-        hero.parent = this.entityLayer;
+        var node = cc.instantiate(this.heroUnit);
+        node.parent = this.node.parent;
 
         var buildCollider = this.node.getComponent(cc.BoxCollider);
-        var heroCollider = hero.getComponent(cc.BoxCollider);
+        var heroCollider = node.getComponent(cc.BoxCollider);
 
         if (this.getBuildRelativePos() == 'up') {
             var bottomX = this.node.x + buildCollider.size.width / 2;
             var bottomY = this.node.y - buildCollider.size.height / 2;
-            hero.x = bottomX - idx * heroCollider.size.width / 2;
-            hero.y = bottomY - heroCollider.size.height;
+            node.x = bottomX - idx * heroCollider.size.width / 2;
+            node.y = bottomY - heroCollider.size.height;
         } else {
             var topX = this.node.x + buildCollider.size.width / 4;
             var topY = this.node.y + buildCollider.size.height / 2;
-            hero.x = topX - idx * heroCollider.size.width / 2;
-            hero.y = topY;
+            node.x = topX - idx * heroCollider.size.width / 2;
+            node.y = topY;
         }
 
-        var heroComponent = hero.getComponent('hero');
-        heroComponent.camp = this.camp;
-        heroComponent.setGrid(this.grid);
-        heroComponent.setAStarMap(this.aStarMap);
+        var hero = node.getComponent('hero');
+        hero.camp = this.camp;
+        hero.setGrid(this.grid);
+        hero.setAStarMap(this.aStarMap);
+        this.node.parent.getComponent('entityLayer').createHero(hero);
     },
 
     getBuildRelativePos: function() {
@@ -112,7 +111,7 @@ cc.Class({
         if (this.clickTimes >= 2) { //双击销毁
             this.clickTimes = 0;
             this.node.destroy();
-            Notification.dispatch('build_destroy', {blockArray: this.blockArray, pos: this.node.getPosition(), range: this.range});
+            Notification.dispatch('build_destroy', this);
         }
     }
 });

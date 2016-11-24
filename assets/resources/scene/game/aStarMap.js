@@ -45,8 +45,8 @@ cc.Class({
     },
 
     addListeners: function() {
-        Notification.on('build_destroy', function(detail){
-            this.destroyBarrier(detail.pos, detail.range);
+        Notification.on('build_destroy', function(target){
+            this.destroyBarrier(target.barrierArray);
         }.bind(this), this);
     },
     
@@ -72,6 +72,7 @@ cc.Class({
         // 循环计算得出最短路线
         var len = zone[1] - zone[0];
         var min = 10000;
+  
         for (var i = 0; i <= len; i++) {
             var y = zone[0] + i;
             var paths = this.aStar.moveToward(start, cc.v2(border, y));
@@ -81,7 +82,7 @@ cc.Class({
                 min = paths.dst;
             }
         }
-  
+
         if (this.enabledDebugDraw) {
             for (let i = 0; i < this.paths.length; ++i) {
                 this.debugDraw(this.paths[i], this.debugTileColor, i);
@@ -120,19 +121,20 @@ cc.Class({
     createBarrier: function(pos, range) {
         var tilePos = this.tilePosistion(pos);
         var gid = this.layerFloor.getTileGIDAt(cc.v2(0, 0));
+        var barrierArray = [];
         for (var i = -range+1; i < range; i++) {
             for (var j = -range; j < range-1; j++) {
                 this.aStar.layerBarrier.setTileGID(gid, tilePos.x + i, tilePos.y + j);
+                barrierArray.push({x: tilePos.x + i, y: tilePos.y + j});
             }     
         }
+        return barrierArray;
     },
 
-    destroyBarrier: function(pos, range) {
-        var tilePos = this.tilePosistion(pos);
-        for (var i = -range+1; i < range; i++) {
-            for (var j = -range; j < range-1; j++) {
-                this.aStar.layerBarrier.removeTileAt(tilePos.x + i, tilePos.y + j);
-            }     
+    destroyBarrier: function(barrierArray) {
+        for (var i = 0; i < barrierArray; i++) {
+            var barrier = barrierArray[i];
+            this.aStar.layerBarrier.removeTileAt(barrier.x, barrier.y);
         }
     },
 });

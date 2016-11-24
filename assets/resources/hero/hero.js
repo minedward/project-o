@@ -41,6 +41,7 @@ cc.Class({
             ],
 
             callbacks: {
+                onidle:             function(event, from, to) { self.onIdle();              },
                 onwalking:          function(event, from, to) { self.onWalking();           },
                 onrun:              function(event, from, to) { self.onRun();               },
                 onattacking:        function(event, from, to) { self.onAttacking();         },
@@ -57,8 +58,11 @@ cc.Class({
         });
 
         this.inPosType = 1; // 1：已方营地 2：战地 3：敌方营地
+    },
+
+    start: function() {
+        this.getMovePath();
         this.fsm.walk();
-        // this.addListeners();
     },
 
     update: function (dt) {
@@ -77,6 +81,11 @@ cc.Class({
 
     // ========================================================
     // 行为状态
+    onIdle: function() {
+        var animationCp = this.node.getComponent('cc.Animation');
+        animationCp.play('idle');
+    },
+
     onWalking: function() {
         var animationCp = this.node.getComponent('cc.Animation');
         animationCp.play('walk');
@@ -113,30 +122,40 @@ cc.Class({
         this.startMoveFlag = true;
     },
 
-    moveByAStar: function() {
+    getMovePath: function() {
         var selfPos = this.node.getPosition();
         var tileSize = this.aStarMap.tiledMap.getTileSize();
         var selfPosAtMap = cc.v2(selfPos.x+tileSize.width/2, selfPos.y+tileSize.height/2+1);
-        var movePath = this.aStarMap.getMovePath(this.aStarMap.tilePosistion(selfPosAtMap), this.camp);
-        var sequence = [];
 
-        for (var i = 0; i < movePath.length; i++) {
-            var pos = this.aStarMap.getPosistion(movePath[i]);
-            pos.y -= tileSize.height / 2;
+        if (this.movePath)
+            delete this.movePath;
 
-            var duration = (pos.x != selfPos.x) && (pos.y != selfPos.y) ? 1.4 / this.speed : 1 / this.speed;
-            sequence.push(cc.moveTo(duration, pos));
+        this.movePath = this.aStarMap.getMovePath(this.aStarMap.tilePosistion(selfPosAtMap), this.camp);
+    },
 
-            selfPos = pos;
-        }
-        sequence.push(cc.callFunc(function() {
-            this.tileMapY = movePath[movePath.length-1].y;
+    moveByAStar: function() {
+        var tileEndPos = this.movePath.shift();
+        if (tileEndPos) {
+            var sequence = [];
+            var selfPos = this.node.getPosition();
+            var endPos = this.aStarMap.getPosistion(tileEndPos);
+            var tileSize = this.aStarMap.tiledMap.getTileSize();
+            endPos.y -= tileSize.height / 2;
+
+            var duration = (endPos.x != selfPos.x) && (endPos.y != selfPos.y) ? 1.4 / this.speed : 1 / this.speed;
+            sequence.push(cc.moveTo(duration, endPos));
+            sequence.push(cc.callFunc(function() {
+                this.startMoveFlag = true;
+            }.bind(this)));
+
+            this.node.runAction(cc.sequence(sequence));
+            this.startMoveFlag = false;
+        } else {
+            // this.tileMapY = tileEndPos.y;
             this.inPosType = 2;
             this.startMoveFlag = true;
-        }.bind(this)));
-
-        this.node.runAction(cc.sequence(sequence));
-        this.startMoveFlag = false;
+            this.moveByLine(cc.director.getDeltaTime());
+        }
     },
 
     moveByLine: function(dt) {

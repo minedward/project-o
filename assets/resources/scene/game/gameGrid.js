@@ -1,7 +1,18 @@
+var aStarMap = require('aStarMap');
+var entityLayer = require('entityLayer');
+
 cc.Class({
     extends: cc.Component,
 
     properties: {
+        aStarMap: {
+            default: null,
+            type: aStarMap
+        },
+        entityLayer: {
+            default: null,
+            type: entityLayer
+        },
         bg: {
             default: null,
             type: cc.Node
@@ -33,7 +44,7 @@ cc.Class({
             tooltip: '主城位置(格)'
         },
         mainBuildRange: 3,
-        freshFrequency: 0.1,
+        freshFrequency: 0.5,
     },
 
     // use this for initialization
@@ -47,22 +58,57 @@ cc.Class({
 
         this.touchVec2 = [];
         this.touchArray = [];
+        this.moveArray = [];
         this.buildRange = 2;
+        this.freshDt = 0;
+
         this.setVisiable(false);
         this.addListeners();
     },
 
     update: function(dt) {
-        this.freshDt += dt;
-        if (this.freshDt > this.freshFrequency) {
+        if (!this.visiable)
+            return;
 
+        this.freshDt += dt;
+        if (this.freshDt > this.freshFrequency) {   //士兵阻挡建筑
             this.freshDt = 0;
+
+            var freshFlag = false;
+            for (var i = 0; i < this.moveArray.length; i++) {
+                var pos = this.moveArray[i];
+                if (this.blockArray[pos.x])
+                    this.blockArray[pos.x][pos.y] = 1;
+                freshFlag = true;
+            }
+            delete this.moveArray;
+            this.moveArray = [];
+
+            for (var key in this.entityLayer.heroSet) {
+                var hero = this.entityLayer.heroSet[key];
+                var heroPos = hero.node.getPosition();
+                if (heroPos.x > this.aStarMap.campBorderPx_l)
+                    continue;
+                
+                var heroCollider = hero.node.getComponent(cc.BoxCollider).size;
+                var heroRect = cc.rect(heroPos.x - heroCollider.width/2, heroPos.y+1, heroCollider.width, heroCollider.height-2);
+                if (cc.rectIntersectsRect(heroRect, this.touchRect)) {
+                    var gridPos = this.position2grid(heroPos);
+                    this.moveArray.push(gridPos);
+                    if (this.blockArray[gridPos.x])
+                        this.blockArray[gridPos.x][gridPos.y] = 2;
+                    freshFlag = true;
+                }
+            }
+
+            if (freshFlag)
+                this.changeRectBlock();
         }
     },
 
     addListeners: function() {
-        Notification.on('build_destroy', function(detail){
-            this.destroyBuild(detail.blockArray);
+        Notification.on('build_destroy', function(target){
+            this.destroyBuild(target.blockArray);
         }.bind(this), this);
     },
 
@@ -158,8 +204,11 @@ cc.Class({
             this.touchVec2[1] = y;
             flag = true;
         }
-        if (flag)
+        if (flag) {
             this.buildCenterPos = cc.v2((x+this.buildRange/2) * this.blockSize, (y+this.buildRange/2) * this.blockSize);
+            var width = (this.buildRange * 2 - 1) * this.aStarMap.tiledMap.getTileSize().width;
+            this.touchRect = cc.rect(this.buildCenterPos.x-width/2, this.buildCenterPos.y-width/2, width, width);
+        }
 
         return flag;
     },

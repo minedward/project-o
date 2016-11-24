@@ -1,14 +1,22 @@
+var gameGrid = require('gameGrid');
+var entityLayer = require('entityLayer');
+
 cc.Class({
     extends: cc.Component,
 
-    properties: {},
+    properties: {
+        gameGrid: {
+            default: null,
+            type: gameGrid
+        },
+        entityLayer: {
+            default: null,
+            type: entityLayer
+        }
+    },
 
     // use this for initialization
     onLoad: function () {
-        var gameScene = this.node.parent.getComponent('gameScene');
-        this.gameGrid = gameScene.gameGrid;
-        this.entityLayer = gameScene.entityLayer;
-
         this.setTouchEvent();
     },
 

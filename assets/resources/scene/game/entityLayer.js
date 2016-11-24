@@ -25,13 +25,29 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        this.heroSet = {};
+        this.heroSID = 0;
+        this.buildSet = {};
+        this.buildSID = 0;
+
         this.preaLoad();
+        this.addListeners();
     },
 
     // called every frame, uncomment this function to activate update callback
     // update: function (dt) {
 
     // },
+
+    addListeners: function() {
+        Notification.on('build_destroy', function(target){
+            this.destroyBuildBySID(target.sid);
+        }.bind(this), this);
+
+        Notification.on('hero_destroy', function(target){
+            this.destroyHeroBySID(target.sid);
+        }.bind(this), this);
+    },
 
     preaLoad: function() {
         this.resources = {};
@@ -97,6 +113,37 @@ cc.Class({
         build.camp = 1;
         build.setGrid(this.grid);
         build.setAStarMap(this.aStarMap);
-        this.aStarMap.createBarrier(vec2, build.range);
+        build.barrierArray = this.aStarMap.createBarrier(vec2, build.range);
+
+        this.buildSet[this.buildSID] = build;
+        build.sid = this.buildSID++;
+
+        for (var key in this.heroSet) {
+            var hero = this.heroSet[key];
+            var movePath = hero.movePath;
+            for (var i = 0; i < movePath.length; i++) {
+                var pos = movePath[i];
+                var barrier_lt = build.barrierArray[0];
+                var barrier_rb = build.barrierArray[build.barrierArray.length - 1];
+                if (pos.x >= barrier_lt.x && pos.x <= barrier_rb.x
+                    && pos.y >= barrier_lt.y && pos.y <= barrier_rb.y) {
+                    hero.getMovePath();
+                    break;
+                }
+            }
+        }
+    },
+
+    destroyBuildBySID: function(sid) {
+        delete this.buildSet[sid];
+    },
+
+    createHero: function(hero) {
+        this.heroSet[this.heroSID] = hero;
+        hero.sid = this.heroSID++;
+    },
+
+    destroyHeroBySID: function(sid) {
+        delete this.heroSet[sid];
     }
 });
