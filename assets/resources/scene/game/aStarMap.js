@@ -132,7 +132,7 @@ cc.Class({
     },
 
     destroyBarrier: function(barrierArray) {
-        for (var i = 0; i < barrierArray; i++) {
+        for (var i = 0; i < barrierArray.length; i++) {
             var barrier = barrierArray[i];
             this.aStar.layerBarrier.removeTileAt(barrier.x, barrier.y);
         }

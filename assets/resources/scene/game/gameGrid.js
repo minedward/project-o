@@ -78,7 +78,7 @@ cc.Class({
             for (var i = 0; i < this.moveArray.length; i++) {
                 var pos = this.moveArray[i];
                 if (this.blockArray[pos.x])
-                    this.blockArray[pos.x][pos.y] = 1;
+                    this.blockArray[pos.x][pos.y] -= 1;
                 freshFlag = true;
             }
             delete this.moveArray;
@@ -96,7 +96,7 @@ cc.Class({
                     var gridPos = this.position2grid(heroPos);
                     this.moveArray.push(gridPos);
                     if (this.blockArray[gridPos.x])
-                        this.blockArray[gridPos.x][gridPos.y] = 2;
+                        this.blockArray[gridPos.x][gridPos.y] += 1;
                     freshFlag = true;
                 }
             }

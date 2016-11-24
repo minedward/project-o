@@ -117,14 +117,16 @@ cc.Class({
 
         this.buildSet[this.buildSID] = build;
         build.sid = this.buildSID++;
+        
+        var barrier_lt = build.barrierArray[0];
+        var barrier_rb = build.barrierArray[build.barrierArray.length - 1];
+        node.setLocalZOrder(barrier_rb.y);
 
         for (var key in this.heroSet) {
             var hero = this.heroSet[key];
             var movePath = hero.movePath;
             for (var i = 0; i < movePath.length; i++) {
                 var pos = movePath[i];
-                var barrier_lt = build.barrierArray[0];
-                var barrier_rb = build.barrierArray[build.barrierArray.length - 1];
                 if (pos.x >= barrier_lt.x && pos.x <= barrier_rb.x
                     && pos.y >= barrier_lt.y && pos.y <= barrier_rb.y) {
                     hero.getMovePath();

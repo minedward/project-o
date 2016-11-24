@@ -62,6 +62,7 @@ cc.Class({
 
     start: function() {
         this.getMovePath();
+        this.resetZOrder();
         this.fsm.walk();
     },
 
@@ -145,6 +146,7 @@ cc.Class({
             var duration = (endPos.x != selfPos.x) && (endPos.y != selfPos.y) ? 1.4 / this.speed : 1 / this.speed;
             sequence.push(cc.moveTo(duration, endPos));
             sequence.push(cc.callFunc(function() {
+                this.resetZOrder();
                 this.startMoveFlag = true;
             }.bind(this)));
 
@@ -169,4 +171,12 @@ cc.Class({
             this.startMoveFlag = false;
         }
     },
+    
+    resetZOrder: function() {
+        if (this.movePath && this.movePath.length > 0) {
+            this.node.setLocalZOrder(this.movePath[0].y);
+        } else {
+            
+        }
+    }
 });
