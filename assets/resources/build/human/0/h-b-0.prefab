@@ -284,8 +284,10 @@
       "__id__": 1
     },
     "_enabled": true,
-    "range": 3,
+    "level": 1,
     "hp": 1000,
+    "camp": 1,
+    "range": 3,
     "defType": 3,
     "buildDuration": 1,
     "frozen": true,

@@ -33,6 +33,16 @@ cc.Class({
             type: cc.Prefab,
             tooltip: '出兵单位'
         },
+        dir: {
+            set: function(value){
+                this._dir = value;
+                this.node.getChildByName('build').scaleX = value * Math.abs(this.node.getChildByName('build').scaleX);
+            },
+            get: function() {
+                return this._dir || 1;
+            },
+            tooltip: '朝向(1：左 -1：右)'
+        }
     },
 
     // use this for initialization

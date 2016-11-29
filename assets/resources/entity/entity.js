@@ -14,13 +14,6 @@ cc.Class({
             default: 1,
             tooltip: '阵营'
         },
-        dir: {
-            tooltip: '朝向(1：左 -1：右)',
-            set: function(vaule){
-                this._dir = value;
-                this.node.scaleX = value;
-            },
-        }
     },
 
     setGrid: function(grid) {

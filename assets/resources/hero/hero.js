@@ -24,6 +24,16 @@ cc.Class({
             default: 5,
             tooltip: '侦查范围'
         },
+        dir: {
+            set: function(value){
+                this._dir = value;
+                this.node.scaleX = value;
+            },
+            get: function() {
+                return this._dir || 1;
+            },
+            tooltip: '朝向(1：左 -1：右)'
+        }
     },
 
     // use this for initialization
