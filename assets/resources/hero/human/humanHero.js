@@ -14,7 +14,7 @@ cc.Class({
     onLoad: function () {
         this._super();
 
-        this.armature = this.armatureDisplay.armature();
+        // this.armature = this.armatureDisplay.armature();
     },
 
     // called every frame, uncomment this function to activate update callback

@@ -53,6 +53,9 @@ cc.Class({
         this.clickDuration = 0;
     },
 
+    start: function() {
+    },
+
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
         if (this.frozen)
@@ -75,6 +78,16 @@ cc.Class({
         }
     },
 
+    hurt: function(value) {
+        if (this.isDead) return;
+
+        this.hp += value;
+        // if (this.hp <= 0) {
+        //     this.node.destroy();
+        //     Notification.dispatch('build_destroy', this);
+        // }
+    },
+
     setGridPosition: function(array) {
         this.blockArray = array;
     },
@@ -83,23 +96,38 @@ cc.Class({
         var node = cc.instantiate(this.heroUnit);
         node.parent = this.node.parent;
 
-        var buildCollider = this.node.getComponent(cc.BoxCollider);
+        var buildCollider = this.getComponent(cc.BoxCollider);
         var heroCollider = node.getComponent(cc.BoxCollider);
 
         if (this.getBuildRelativePos() == 'up') {
-            var bottomX = this.node.x + buildCollider.size.width / 2;
+            var bottomX;
+            if (this.camp == 1){
+                bottomX = this.node.x + buildCollider.size.width / 2;
+                node.x = bottomX - idx * heroCollider.size.width / 2;
+            } else {
+                bottomX = this.node.x - buildCollider.size.width / 2;
+                node.x = bottomX + idx * heroCollider.size.width / 2;
+            }
+            
             var bottomY = this.node.y - buildCollider.size.height / 2;
-            node.x = bottomX - idx * heroCollider.size.width / 2;
             node.y = bottomY - heroCollider.size.height;
         } else {
-            var topX = this.node.x + buildCollider.size.width / 4;
+            var topX;
+            if (this.camp == 1){
+                topX = this.node.x + buildCollider.size.width / 4;
+                node.x = topX - idx * heroCollider.size.width / 2;
+            } else {
+                topX = this.node.x - buildCollider.size.width / 4;
+                node.x = topX + idx * heroCollider.size.width / 2;
+            }
+
             var topY = this.node.y + buildCollider.size.height / 2;
-            node.x = topX - idx * heroCollider.size.width / 2;
             node.y = topY;
         }
 
         var hero = node.getComponent('hero');
         hero.camp = this.camp;
+        hero.dir = this.camp == 1 ? 1 : -1;
         hero.setGrid(this.grid);
         hero.setAStarMap(this.aStarMap);
         this.node.parent.getComponent('entityLayer').createHero(hero);

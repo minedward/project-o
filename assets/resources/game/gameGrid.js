@@ -90,7 +90,7 @@ cc.Class({
                 if (heroPos.x > this.aStarMap.campBorderPx_l)
                     continue;
                 
-                var heroCollider = hero.node.getComponent(cc.BoxCollider).size;
+                var heroCollider = hero.getComponent(cc.BoxCollider).size;
                 var heroRect = cc.rect(heroPos.x - heroCollider.width/2, heroPos.y+1, heroCollider.width, heroCollider.height-2);
                 if (cc.rectIntersectsRect(heroRect, this.touchRect)) {
                     var gridPos = this.position2grid(heroPos);
@@ -273,6 +273,19 @@ cc.Class({
             var y = element[1];
             this.blockArray[x][y] = 2;
         }
+    },
+
+    createBuildFromMap: function(node) {
+        var build = node.getComponent('build');
+        var pos = this.position2grid(node.position);
+        var blockArray = [];
+        for (var i = 0; i < build.range; i++) {
+            for (var j = 0; j < build.range; j++) {
+                var block = [pos.x + i, pos.y + j];
+                blockArray.push(block);
+            }
+        }
+        return blockArray;
     },
 
     destroyBuild: function(blockArray) {

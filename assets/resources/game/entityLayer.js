@@ -72,19 +72,29 @@ cc.Class({
     preLoadCallback: function(err, res, url) {
         this.resources[url] = res;
         this.resLoadCount++;
-        if (this.resLoadCount >= this.resPath.length)
-            this.initMainBuild();
+        // if (this.resLoadCount >= this.resPath.length)
+        //     this.initMap();
     },
 
-    initMainBuild: function() {
-        var node_l = cc.instantiate(this.resources[this.resPath[0]]);
-        node_l.parent = this.node;
-        node_l.setPosition(this.mainBuildPos_l);
+    initMainBuild: function(lb, rb) {
+        this.mainBuild_l = lb;
+        this.mainBuild_l.removeFromParent();
+        this.mainBuild_l.parent = this.node;
 
-        var node_r = cc.instantiate(this.resources[this.resPath[0]]);
-        node_r.parent = this.node;
-        node_r.setPosition(this.mainBuildPos_r);
+        this.mainBuild_r = rb;
+        this.mainBuild_r.removeFromParent();
+        this.mainBuild_r.parent = this.node;
     },
+
+    // initMainBuild: function() {
+    //     this.mainBuild_l = cc.instantiate(this.resources[this.resPath[0]]);
+    //     this.mainBuild_l.parent = this.node;
+    //     this.mainBuild_l.setPosition(this.mainBuildPos_l);
+
+    //     this.mainBuild_r = cc.instantiate(this.resources[this.resPath[0]]);
+    //     this.mainBuild_r.parent = this.node;
+    //     this.mainBuild_r.setPosition(this.mainBuildPos_r);
+    // },
 
     createVirtualBuild: function(vec2) {
         var node = cc.instantiate(this.resources[this.resPath[1]]);
@@ -92,6 +102,7 @@ cc.Class({
         node.parent = this.virtualEntityLayer;
         node.setPosition(vec2);
         node.getComponent('build').frozen = true;
+        node.getComponent(cc.BoxCollider).enabled = false;
         this.currVirtualBuild = node;
     },
 
@@ -103,7 +114,7 @@ cc.Class({
         this.currVirtualBuild.removeFromParent();
     },
 
-    createBuild: function(vec2, blockArray, heroMovePath) {
+    createBuild: function(vec2, blockArray) {
         var node = cc.instantiate(this.resources[this.resPath[1]]);
         node.parent = this.node;
         node.setPosition(vec2);
@@ -134,6 +145,24 @@ cc.Class({
                 }
             }
         }
+    },
+
+    createBuildFromMap: function(node, blockArray) {
+        node.removeFromParent();
+        node.parent = this.node;
+        
+        var build = node.getComponent('build');
+        build.setGridPosition(blockArray);
+        build.setGrid(this.grid);
+        build.setAStarMap(this.aStarMap);
+        build.barrierArray = this.aStarMap.createBarrier(node.position, build.range);
+
+        this.buildSet[this.buildSID] = build;
+        build.sid = this.buildSID++;
+        
+        var barrier_lt = build.barrierArray[0];
+        var barrier_rb = build.barrierArray[build.barrierArray.length - 1];
+        node.setLocalZOrder(barrier_rb.y);
     },
 
     destroyBuildBySID: function(sid) {

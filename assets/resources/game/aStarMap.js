@@ -16,6 +16,8 @@ cc.Class({
         campBorder_r: 53,
         campBorderPx_l: 432,
         campBorderPx_r: 848,
+        attackBorderPx_l: 184,
+        attackBorderPx_r: 1096,
         zone_t:{
             default: [],
             type: [cc.Integer]
