@@ -271,7 +271,8 @@ cc.Class({
             var element = this.touchArray[i];
             var x = element[0];
             var y = element[1];
-            this.blockArray[x][y] = 2;
+            if (this.blockArray[x])
+                this.blockArray[x][y] = 2;
         }
     },
 
@@ -293,7 +294,8 @@ cc.Class({
             var element = blockArray[i];
             var x = element[0];
             var y = element[1];
-            this.blockArray[x][y] = 1;
+            if (this.blockArray[x])
+                this.blockArray[x][y] = 1;
         }
     },
 });

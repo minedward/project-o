@@ -13,6 +13,10 @@ cc.Class({
             default: null,
             type: AStarMap
         },
+        uiLayer: {
+            default: null,
+            type: cc.Node
+        },
         mainBuildPos_l: {
             default: new cc.Vec2(80, 240),
             tooltip: '左边主城位置（像素）'
@@ -77,13 +81,17 @@ cc.Class({
     },
 
     initMainBuild: function(lb, rb) {
-        this.mainBuild_l = lb;
-        this.mainBuild_l.removeFromParent();
-        this.mainBuild_l.parent = this.node;
+        var createMainBuild = function(build) {
+            build.removeFromParent();
+            build.parent = this.node;
+            var buildComponent = build.getComponent('entity');
+            buildComponent.hpbar.removeFromParent();
+            buildComponent.hpbar.parent = this.node;
+            return build;
+        }.bind(this);
 
-        this.mainBuild_r = rb;
-        this.mainBuild_r.removeFromParent();
-        this.mainBuild_r.parent = this.node;
+        this.mainBuild_l = createMainBuild(lb);
+        this.mainBuild_r = createMainBuild(rb);
     },
 
     // initMainBuild: function() {
@@ -122,7 +130,6 @@ cc.Class({
         var build = node.getComponent('build');
         build.setGridPosition(blockArray);
         build.camp = 1;
-        build.setGrid(this.grid);
         build.setAStarMap(this.aStarMap);
         build.barrierArray = this.aStarMap.createBarrier(vec2, build.range);
 
@@ -132,6 +139,10 @@ cc.Class({
         var barrier_lt = build.barrierArray[0];
         var barrier_rb = build.barrierArray[build.barrierArray.length - 1];
         node.setLocalZOrder(barrier_rb.y);
+
+        // hpbar
+        build.hpbar.removeFromParent();
+        build.hpbar.parent = this.node;
 
         for (var key in this.heroSet) {
             var hero = this.heroSet[key];
@@ -153,7 +164,6 @@ cc.Class({
         
         var build = node.getComponent('build');
         build.setGridPosition(blockArray);
-        build.setGrid(this.grid);
         build.setAStarMap(this.aStarMap);
         build.barrierArray = this.aStarMap.createBarrier(node.position, build.range);
 
@@ -163,6 +173,10 @@ cc.Class({
         var barrier_lt = build.barrierArray[0];
         var barrier_rb = build.barrierArray[build.barrierArray.length - 1];
         node.setLocalZOrder(barrier_rb.y);
+
+        // hpbar
+        build.hpbar.removeFromParent();
+        build.hpbar.parent = this.node;
     },
 
     destroyBuildBySID: function(sid) {

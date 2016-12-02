@@ -1,12 +1,26 @@
 {
-  "start-scene": "current",
-  "group-list": [
-    "default"
-  ],
   "collision-matrix": [
     [
+      false,
+      false,
+      false
+    ],
+    [
+      false,
+      false,
       true
+    ],
+    [
+      false,
+      true,
+      false
     ]
   ],
-  "excluded-modules": []
+  "excluded-modules": [],
+  "group-list": [
+    "normal",
+    "entity",
+    "search"
+  ],
+  "start-scene": "current"
 }

@@ -14,6 +14,15 @@ cc.Class({
             default: 1,
             tooltip: '阵营'
         },
+        hpbar: {
+            default: null,
+            type: cc.Node
+        },
+        hpbarHeight: 50,
+    },
+
+    onLoad: function() {
+        this.maxHp = this.hp;
     },
 
     setGrid: function(grid) {
@@ -23,4 +32,20 @@ cc.Class({
     setAStarMap: function(map) {
         this.aStarMap = map;
     },
+
+    hurt: function(value) {
+        if (this.isDead) return;
+
+        this.hp += value;
+        if (this.hp > 0) {
+            this.hpbar.active = true;
+            var selfPos = this.node.position;
+            this.hpbar.position = cc.v2(selfPos.x, selfPos.y + this.hpbarHeight);
+            this.hpbar.getComponent(cc.ProgressBar).progress = this.hp / this.maxHp;
+        } else {
+            this.isDead = true;
+            this.hpbar.active = false;
+            this.hpbar.removeFromParent();
+        }
+    }
 });

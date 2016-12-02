@@ -86,13 +86,16 @@
         "__id__": 129
       },
       {
+        "__id__": 131
+      },
+      {
         "__id__": 130
       },
       {
-        "__id__": 132
+        "__id__": 133
       },
       {
-        "__id__": 133
+        "__id__": 134
       }
     ],
     "_rotationX": 0,
@@ -114,10 +117,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 140
+        "__id__": 141
       },
       {
-        "__id__": 141
+        "__id__": 142
       }
     ],
     "_prefab": null,
@@ -775,6 +778,9 @@
     },
     "aStarMap": {
       "__id__": 12
+    },
+    "uiLayer": {
+      "__id__": 130
     },
     "mainBuildPos_l": {
       "__type__": "cc.Vec2",
@@ -5258,6 +5264,54 @@
   },
   {
     "__type__": "cc.Node",
+    "_name": "ui",
+    "_objFlags": 0,
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_parent": {
+      "__id__": 2
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 1280,
+      "height": 480
+    },
+    "_children": [],
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": -640,
+      "y": -210
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_tag": -1,
+    "_opacityModifyRGB": false,
+    "_id": "80cfeHpNKpFiZwTB2/PtzVO",
+    "_active": true,
+    "_components": [],
+    "_prefab": null,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "cc.Node",
     "_name": "touchLayer",
     "_objFlags": 0,
     "_opacity": 255,
@@ -5302,7 +5356,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 131
+        "__id__": 132
       }
     ],
     "_prefab": null,
@@ -5313,7 +5367,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 130
+      "__id__": 131
     },
     "_enabled": true,
     "gameGrid": {
@@ -5399,7 +5453,7 @@
     },
     "_children": [
       {
-        "__id__": 134
+        "__id__": 135
       }
     ],
     "_rotationX": 0,
@@ -5437,7 +5491,7 @@
     },
     "_cascadeOpacityEnabled": true,
     "_parent": {
-      "__id__": 133
+      "__id__": 134
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -5451,7 +5505,7 @@
     },
     "_children": [
       {
-        "__id__": 135
+        "__id__": 136
       }
     ],
     "_rotationX": 0,
@@ -5473,10 +5527,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 137
+        "__id__": 138
       },
       {
-        "__id__": 138
+        "__id__": 139
       }
     ],
     "_prefab": null,
@@ -5496,7 +5550,7 @@
     },
     "_cascadeOpacityEnabled": true,
     "_parent": {
-      "__id__": 134
+      "__id__": 135
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -5528,7 +5582,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 136
+        "__id__": 137
       }
     ],
     "_prefab": null,
@@ -5539,11 +5593,11 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 135
+      "__id__": 136
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_actualFontSize": 40,
+    "_actualFontSize": 20,
     "_fontSize": 20,
     "_lineHeight": 40,
     "_enableWrapText": false,
@@ -5559,7 +5613,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 134
+      "__id__": 135
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -5585,7 +5639,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 134
+      "__id__": 135
     },
     "_enabled": true,
     "transition": 2,
@@ -5613,7 +5667,7 @@
     },
     "clickEvents": [
       {
-        "__id__": 139
+        "__id__": 140
       }
     ],
     "_N$interactable": true,
@@ -5639,13 +5693,13 @@
       "__uuid__": "29158224-f8dd-4661-a796-1ffab537140e"
     },
     "_N$target": {
-      "__id__": 134
+      "__id__": 135
     }
   },
   {
     "__type__": "cc.ClickEvent",
     "target": {
-      "__id__": 130
+      "__id__": 131
     },
     "component": "touchLayer",
     "handler": "enableBuildMode",

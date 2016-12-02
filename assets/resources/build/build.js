@@ -1,4 +1,5 @@
 var entity = require('entity');
+var helper = require('Helper');
 
 cc.Class({
     extends: entity,
@@ -47,6 +48,8 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        this._super();
+
         this.dt = 0;
         this.buildDt = 0;
         this.clickTimes = 0;
@@ -79,13 +82,15 @@ cc.Class({
     },
 
     hurt: function(value) {
-        if (this.isDead) return;
+        this._super(value);
 
-        this.hp += value;
-        // if (this.hp <= 0) {
-        //     this.node.destroy();
-        //     Notification.dispatch('build_destroy', this);
-        // }
+        if (this.hp <= 0) {
+            this.frozen = true;
+            helper.performWithDelay(this.node, function() {
+                this.node.destroy();
+                Notification.dispatch('build_destroy', this);
+            }.bind(this), 1);
+        }
     },
 
     setGridPosition: function(array) {
@@ -126,11 +131,15 @@ cc.Class({
         }
 
         var hero = node.getComponent('hero');
+        var entityLayer = this.node.parent.getComponent('entityLayer');
         hero.camp = this.camp;
         hero.dir = this.camp == 1 ? 1 : -1;
-        hero.setGrid(this.grid);
         hero.setAStarMap(this.aStarMap);
-        this.node.parent.getComponent('entityLayer').createHero(hero);
+        entityLayer.createHero(hero);
+
+        // hpbar
+        hero.hpbar.removeFromParent();
+        hero.hpbar.parent = entityLayer.uiLayer;
     },
 
     getBuildRelativePos: function() {

@@ -14,9 +14,10 @@ cc.Class({
         if (!entity) return;
         if (entity.camp == this.hero.camp) return;
         if (other.tag == 99) return;
+        if (entity.isDead) return;
         
         this.hero.target = other.node;
-        this.hero.moveByTarget(cc.director.getDeltaTime());
+        // this.hero.moveByTarget(cc.director.getDeltaTime());
         this.node.active = false;
     },
 });

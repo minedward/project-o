@@ -52,6 +52,8 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        this._super();
+        
         var self = this;
         this.fsm = StateMachine.create({
             initial: 'idle',
@@ -94,27 +96,42 @@ cc.Class({
         this.getRealSpeed();
         this.getMovePath();
         this.resetZOrder();
+        this.addListeners();
 
-        this.fsm.walk();
+        if (this.fsm.current == 'idle')
+            this.fsm.walk();
     },
 
     update: function (dt) {
+        if (this.isDead) return;
+
+        this.updateAtkCD(dt);
+
         if (this.target) {
-            if (this.target.isDead) {
+            this.node.stopAllActions();
+
+            if (this.target.getComponent('entity').isDead) {
                 this.target = null;
                 this.eye.active = true;
+                this.inAtkState = false;
                 this.startMoveFlag = true;
+                if (this.inPosType == 1) {
+                    this.getMovePath();
+                }
             } else {
-                if (this.inAtkState)
-                    this.updateAtkCD(dt);
+                if (this.inAtkState) {
+                    if (this.canAtk)
+                        this.fsm.attack();
+                }
                 else
                     this.moveByTarget(dt);
-
                 return;
             }
         }
 
         if (this.startMoveFlag) {
+            if (this.fsm.current == 'attacking' || this.fsm.current == 'skilling') return;
+
             this.node.stopAllActions();
             if (this.inPosType == 1) {  // A星寻路
                 this.moveByAStar();
@@ -125,14 +142,22 @@ cc.Class({
     },
 
     updateAtkCD: function(dt) {
+        if (this.canAtk) return;
+
         this.atkDt += dt;
         if (this.atkDt >= this.atkCD) {
             this.atkDt = 0;
-            this.fsm.attack();
+            this.canAtk = true;
         }
     },
 
     addListeners: function() {
+        this.node.on('position-changed', function(event) {
+            if (this.hpbar.active) {
+                var selfPos = event.target.position;
+                this.hpbar.position = cc.v2(selfPos.x, selfPos.y + this.hpbarHeight);
+            }
+        }.bind(this), this);
     },
 
     // ========================================================
@@ -178,29 +203,31 @@ cc.Class({
         this.startMoveFlag = true;
     },
 
-    onAttack: function() {   
+    onAttack: function() {
+        this.canAtk = false;
     },
 
     onHurt: function() {
     },
 
     onDie: function() {
-
+        this.inAtkState = false;
+        this.getComponent(cc.BoxCollider).enabled = false;
     },
 
     onRest: function() {
     },
 
     hurt: function(value) {
-        if (this.isDead) return;
+        this._super(value);
 
-        this.hp += value;
         if (this.hp > 0) {
-            if (this.fsm.current == 'attacking' || this.fsm.current == 'skilling') return;
-            this.fsm.hurt();
-        }
-        else
+            if (this.fsm.current == 'idle') {
+                this.fsm.hurt();
+            }
+        } else {
             this.fsm.die();
+        }
     },
 
     getRealSpeed: function() {
@@ -220,6 +247,9 @@ cc.Class({
     },
 
     moveByAStar: function() {
+        if (this.fsm.current == 'idle')
+            this.fsm.walk();
+
         var tileEndPos = this.movePath.shift();
         if (tileEndPos) {
             var sequence = [];
@@ -253,12 +283,17 @@ cc.Class({
             this.target = target;;
             this.moveByTarget(cc.director.getDeltaTime());
         }.bind(this);
+  
+        if (this.fsm.current == 'idle')
+            this.fsm.walk();
 
         if (this.camp == 1) {
             if (this.node.x < this.aStarMap.attackBorderPx_r) {
                 if (this.inPosType == 2 && this.node.x > this.aStarMap.campBorderPx_r)
                     this.inPosType = 3;
                 
+                if (this.dir == -1)
+                    this.dir = 1;
                 this.node.x += this.speedPx * dt;
             } else {
                 moveToMainBuild(this.node.parent.getComponent('entityLayer').mainBuild_r);
@@ -268,6 +303,8 @@ cc.Class({
                 if (this.inPosType == 2 && this.node.x < this.aStarMap.campBorderPx_l)
                     this.inPosType = 3;
                 
+                if (this.dir == 1)
+                    this.dir = -1;
                 this.node.x -= this.speedPx * dt;
             } else {
                 moveToMainBuild(this.node.parent.getComponent('entityLayer').mainBuild_l);
@@ -279,15 +316,19 @@ cc.Class({
         var selfPos = this.node.position;
         var targetPos = this.target.position;
         var atkDst = this.target.width/2 + this.node.width/2;
-        if (Math.abs(targetPos.x - selfPos.x) < atkDst)
+        this.dir = targetPos.x > selfPos.x ? 1 : -1;
+
+        if (Math.abs(targetPos.x - selfPos.x) < atkDst && Math.abs(targetPos.y - selfPos.y) < atkDst*0.5)
             return null;
         
-        this.dir = targetPos.x > selfPos.x ? 1 : -1;
         var endPos = cc.pSub(cc.v2(targetPos.x - (this.target.width/2 + this.node.width/2 - 4)*this.dir, targetPos.y), selfPos);
         return cc.pNormalize(endPos);
     },
 
     moveByTarget: function(dt) {
+        if (this.fsm.current == 'idle')
+            this.fsm.walk();
+        
         var targetVec2 = this.getMoveVec2();
         if (targetVec2) {
             this.node.x += targetVec2.x * this.speedPx * dt;
@@ -295,6 +336,7 @@ cc.Class({
         } else {
             this.inAtkState = true;
             this.resetZOrder();
+            this.fsm.rest();
         }
     },
 
@@ -321,6 +363,8 @@ cc.Class({
         var name = event.detail.animationState.name;
         if (name == 'attack' || name == 'skill' || name == 'hurt') {
             this.fsm.rest();
+        } else if (name == 'die') {
+            this.node.destroy();
         }
     },
 
