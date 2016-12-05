@@ -25,6 +25,10 @@ cc.Class({
         this.maxHp = this.hp;
     },
 
+    start: function() {
+        this.hpbar.getComponent('hpbar').init(this.camp, this.level);
+    },
+
     setGrid: function(grid) {
         this.grid = grid;
     },
@@ -33,7 +37,7 @@ cc.Class({
         this.aStarMap = map;
     },
 
-    hurt: function(value) {
+    changeHp: function(value) {
         if (this.isDead) return;
 
         this.hp += value;
@@ -41,7 +45,7 @@ cc.Class({
             this.hpbar.active = true;
             var selfPos = this.node.position;
             this.hpbar.position = cc.v2(selfPos.x, selfPos.y + this.hpbarHeight);
-            this.hpbar.getComponent(cc.ProgressBar).progress = this.hp / this.maxHp;
+            this.hpbar.getComponent('hpbar').setPercent(this.hp / this.maxHp);
         } else {
             this.isDead = true;
             this.hpbar.active = false;

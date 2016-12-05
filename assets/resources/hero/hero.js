@@ -93,6 +93,8 @@ cc.Class({
     },
 
     start: function() {
+        this._super();
+
         this.getRealSpeed();
         this.getMovePath();
         this.resetZOrder();
@@ -160,6 +162,23 @@ cc.Class({
         }.bind(this), this);
     },
 
+    init: function(obj) {
+        this.camp = obj.camp;
+        this.dir = obj.camp == 1 ? 1 : -1;
+        this.setAStarMap(obj.aStarMap);
+
+        if (this.armature) {
+            var slot = this.armature.getSlot('circle' + (obj.camp == 1 ? 2 : 1));
+            if (slot)
+                slot.display = null;
+        }
+    },
+
+    initHpbar: function(layer) {
+        this.hpbar.removeFromParent();
+        this.hpbar.parent = layer;
+    },
+
     // ========================================================
     // 行为状态
     onIdle: function() {
@@ -219,7 +238,7 @@ cc.Class({
     },
 
     hurt: function(value) {
-        this._super(value);
+        this.changeHp(value);
 
         if (this.hp > 0) {
             if (this.fsm.current == 'idle') {
@@ -371,7 +390,8 @@ cc.Class({
     onAnimationFrameEvent: function(event) {
         var name = event.detail.name;
         if (name == 'onDamage') {
-            this.target.getComponent('entity').hurt(-this.atk);
+            if (cc.isValid(this.target))
+                this.target.getComponent('entity').hurt(-this.atk);
         }
     }
 });

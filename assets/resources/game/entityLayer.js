@@ -128,10 +128,7 @@ cc.Class({
         node.setPosition(vec2);
         
         var build = node.getComponent('build');
-        build.setGridPosition(blockArray);
-        build.camp = 1;
-        build.setAStarMap(this.aStarMap);
-        build.barrierArray = this.aStarMap.createBarrier(vec2, build.range);
+        build.init({camp: 1, blockArray: blockArray, aStarMap: this.aStarMap, barrierArray: this.aStarMap.createBarrier(vec2, build.range)})
 
         this.buildSet[this.buildSID] = build;
         build.sid = this.buildSID++;
@@ -140,9 +137,7 @@ cc.Class({
         var barrier_rb = build.barrierArray[build.barrierArray.length - 1];
         node.setLocalZOrder(barrier_rb.y);
 
-        // hpbar
-        build.hpbar.removeFromParent();
-        build.hpbar.parent = this.node;
+        build.initHpbar(this.node);
 
         for (var key in this.heroSet) {
             var hero = this.heroSet[key];

@@ -57,6 +57,7 @@ cc.Class({
     },
 
     start: function() {
+        this._super();
     },
 
     // called every frame, uncomment this function to activate update callback
@@ -81,8 +82,20 @@ cc.Class({
         }
     },
 
+    init: function(obj) {       
+        this.setGridPosition(obj.blockArray);
+        this.camp = obj.camp;
+        this.setAStarMap(obj.aStarMap);
+        this.barrierArray = obj.barrierArray;
+    },
+
+    initHpbar: function(layer) {
+        this.hpbar.removeFromParent();
+        this.hpbar.parent = layer;
+    },
+
     hurt: function(value) {
-        this._super(value);
+        this.changeHp(value);
 
         if (this.hp <= 0) {
             this.frozen = true;
@@ -132,14 +145,9 @@ cc.Class({
 
         var hero = node.getComponent('hero');
         var entityLayer = this.node.parent.getComponent('entityLayer');
-        hero.camp = this.camp;
-        hero.dir = this.camp == 1 ? 1 : -1;
-        hero.setAStarMap(this.aStarMap);
+        hero.init({camp : this.camp, aStarMap : this.aStarMap});
         entityLayer.createHero(hero);
-
-        // hpbar
-        hero.hpbar.removeFromParent();
-        hero.hpbar.parent = entityLayer.uiLayer;
+        hero.initHpbar(entityLayer.uiLayer);
     },
 
     getBuildRelativePos: function() {

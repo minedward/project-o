@@ -243,7 +243,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 30
+      "y": 50
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -491,7 +491,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 30
+      "y": 50
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -756,7 +756,7 @@
     "blockSize": 32,
     "lineSize": 2,
     "vaildBlockWidth": 13,
-    "originY": 150,
+    "originY": 170,
     "mainBuildPos": {
       "__type__": "cc.Vec2",
       "x": 1,
@@ -837,7 +837,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": -640,
-      "y": -210
+      "y": -190
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -5248,7 +5248,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": -640,
-      "y": -210
+      "y": -190
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -5296,7 +5296,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": -640,
-      "y": -210
+      "y": -190
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -5344,7 +5344,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 30
+      "y": 50
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -5449,7 +5449,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1280,
-      "height": 120
+      "height": 160
     },
     "_children": [
       {
