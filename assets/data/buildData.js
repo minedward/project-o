@@ -3,7 +3,7 @@
 */
 var buildData = cc.Class({
     properties: {
-        
+        level: 1,
     },
     
 });

@@ -1,26 +1,29 @@
-cc.Class({
-    extends: cc.Component,
+/*
+    种族数据模型
+*/
+var buildData = require('buildData');
 
+var raceData = cc.Class({
     properties: {
-        // foo: {
-        //    default: null,      // The default value will be used only when the component attaching
-        //                           to a node for the first time
-        //    url: cc.Texture2D,  // optional, default is typeof default
-        //    serializable: true, // optional, default is true
-        //    visible: true,      // optional, default is true
-        //    displayName: 'Foo', // optional
-        //    readonly: false,    // optional, default is false
-        // },
-        // ...
+        level: 1,
+        builds: {
+            default: {},
+            type: buildData,
+            serializable: false
+        },
+        buildInGroup: {
+            default: {},
+            type: buildData,
+            serializable: false
+        },
     },
 
-    // use this for initialization
-    onLoad: function () {
-
-    },
-
-    // called every frame, uncomment this function to activate update callback
-    // update: function (dt) {
-
-    // },
+    updateData: function(obj) {
+        for (var key in obj) {
+            var element = obj[key];
+            this[key] = element;
+        }
+    }
 });
+
+module.exports = raceData;
